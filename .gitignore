@@ -2,3 +2,4 @@
 server/target/
 server/.idea/
 server/project/
+server/*.iml
