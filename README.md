@@ -24,7 +24,7 @@ browse (opens default browser) <br>
 
 
 <b>Team members:</b> <br>
-Mikko Kaistinen <br>
-Lauri Naukkarinen <br>
-Oskar Sonninen <br>
-Joonas Blomberg
+Mikko Kaistinen (back end) <br>
+Lauri Naukkarinen (front end) <br>
+Oskar Sonninen (assets) <br>
+Joonas Blomberg (assets)
