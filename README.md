@@ -1,7 +1,5 @@
-TagYourGame
+TagYourGame - FGJ 2014
 ===========
-
-<h2>FGJ 2014 game project</h2>
 
 <h3>Server:</h3>
 Build on top of Scalatra (http://www.scalatra.org/). <br>
