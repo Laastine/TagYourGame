@@ -1,0 +1,13 @@
+{
+  "name": "TagYourGame-mock-server",
+  "version": "0.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express": "~3.4.0",
+    "socket.io": "~0.9.16"
+  },
+  "devDependencies": {},
+  "author": "Lauri Naukkarinen",
+  "license": "MIT"
+}
