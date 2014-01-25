@@ -1,6 +1,5 @@
-
 server/target/
 server/.idea/
 server/project/
-server/*.iml
+server/server.iml
 server/.idea_modules/
