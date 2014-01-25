@@ -8,8 +8,9 @@ Build on top of Scalatra (http://www.scalatra.org/). <br>
 Simple websocket implementation for player communication. <br>
 
 Dependencies: <br>
-SBT 0.13.x <br>
-Java 1.7 <br>
+
+* [SBT 0.13.1](http://www.scala-sbt.org/)
+* [Java 1.7](http://www.oracle.com/technetwork/java/javase/downloads/)
 
 
 Server start:
