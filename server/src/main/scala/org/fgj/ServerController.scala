@@ -11,10 +11,16 @@ import java.util.Date
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
+/**
+ * server
+ * Created with IntelliJ IDEA.
+ * User: laastine
+ * Date: 25.01.2014
+ */
 class ServerController extends ScalatraServlet
-with ScalateSupport with JValueResult
-with JacksonJsonSupport with SessionSupport
-with AtmosphereSupport {
+  with ScalateSupport with JValueResult
+  with JacksonJsonSupport with SessionSupport
+  with AtmosphereSupport {
 
   implicit protected val jsonFormats: Formats = DefaultFormats
 
