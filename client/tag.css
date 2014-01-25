@@ -15,11 +15,15 @@
   opacity: 0.8;
 }
 
-.tag-current {
+.tag-player-cell {
   background-color: rgb(77, 172, 230);
 }
 
-.tag-not-current {
+.tag-enemy-cell {
+  background-color: rgb(77, 172, 230);
+}
+
+.tag-empty-cell {
   background-color: rgb(223, 223, 223);
 }
 
