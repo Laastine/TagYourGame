@@ -23,8 +23,12 @@ class ServerController extends ScalatraServlet
   with SessionSupport with AtmosphereSupport {
 
   implicit protected val jsonFormats: Formats = DefaultFormats
-
   def logger = LoggerFactory.getLogger(this.getClass)
+
+  //Simple map generation
+  def generateMap() = {
+    val map = Array.fill(10, 10)(scala.util.Random.nextInt(10))
+  }
 
   get("/") {
     contentType = "text/html"
@@ -34,6 +38,12 @@ class ServerController extends ScalatraServlet
   atmosphere("/server") {
     new AtmosphereClient {
       def receive: AtmoReceive = {
+
+        case JsonMessage(json) =>
+          logger.info("JSON="+json)
+          broadcast(json) //Send to others
+          send(json)      //Send back to sender
+
         case Connected =>
           logger.info("Player %s is connected" format uuid)
           broadcast(("author" -> "Someone") ~ ("message" -> "joined the game") ~ ("time" -> (new Date().getTime.toString)), Everyone)
@@ -43,20 +53,15 @@ class ServerController extends ScalatraServlet
 
         case Disconnected(ServerDisconnected, _) =>
           logger.info("Server disconnected the client %s" format uuid)
-        case _: TextMessage =>
-          send(("author" -> "system") ~ ("message" -> "Only json is allowed") ~ ("time" -> (new Date().getTime.toString)))
 
-        case JsonMessage(json) =>
-          logger.info("Got message %s from %s".format((json \ "message").extract[String], (json \ "author").extract[String]))
-          val msg = json merge (("time" -> (new Date().getTime().toString)): JValue)
-          broadcast(msg) // by default a broadcast is to everyone but self
-          //send(msg) // also send to the sender
+        case _: TextMessage =>
+          send(("author" -> "system") ~ ("message" -> "Only JSON is allowed") ~ ("time" -> (new Date().getTime.toString)))
       }
     }
   }
 
   error {
-    case e: Throwable => e.printStackTrace()
+    case e: Throwable => logger.error("ERROR "+e.toString)
   }
 
   notFound {
