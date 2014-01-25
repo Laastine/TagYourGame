@@ -1,5 +1,5 @@
 
-.tag {
+.block {
   width: 40px;
   height: 40px;
   display: inline-block;
@@ -11,28 +11,32 @@
   transition: all .1s ease-out;
 }
 
-.tag:hover {
+.block:hover {
   opacity: 0.8;
 }
 
-.tag-current {
+.block-player {
   background-color: rgb(77, 172, 230);
 }
 
-.tag-not-current {
+.block-enemy {
+  background-color: rgb(255, 127, 0);
+}
+
+.block-empty {
   background-color: rgb(223, 223, 223);
 }
 
-.tag-possible {
+.block-possible {
   background-color: rgb(0, 163, 61);
   opacity: 0.3;
 }
 
-.tag-los-out {
+.block-los-out {
   visibility: hidden
 }
 
-.tag-enter {
+.block-enter {
   opacity: 0.01;
   -webkit-transform: scale(.5);
   -moz-transform: scale(.5);
@@ -41,7 +45,7 @@
   transition: all .3s ease-out;
 }
 
-.tag-enter.tag-enter-active {
+.block-enter.block-enter-active {
   opacity: 1;
   -webkit-transform: scale(1);
   -moz-transform: scale(1);
