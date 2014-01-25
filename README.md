@@ -27,3 +27,4 @@ browse (opens default browser) <br>
 Mikko Kaistinen <br>
 Lauri Naukkarinen <br>
 Oskar Sonninen <br>
+Joonas Blomberg
