@@ -13,12 +13,12 @@ Simple websocket implementation for player communication. <br>
 * [Java 1.7](http://www.oracle.com/technetwork/java/javase/downloads/)
 
 
-<h3>Server start:</h3>
+<h3>Server</h3>
 sbt <br>
 container:start (Deploy to Jetty container) <br>
 browse (opens default browser) <br>
 
-<h3>Client:</h3>
+<h3>Client</h3>
 ???
 
 
