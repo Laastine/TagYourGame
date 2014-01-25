@@ -2,7 +2,7 @@ TagYourGame - FGJ 2014
 ===========
 
 <h3>Server:</h3>
-Build on top of Scalatra (http://www.scalatra.org/). <br>
+Build on top of [Scalatra] (http://www.scalatra.org/), a tiny high-performance, async web framework for Scala<br>
 Simple websocket implementation for player communication. <br>
 
 <b>Dependencies:</b> <br>
