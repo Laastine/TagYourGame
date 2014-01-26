@@ -157,14 +157,17 @@ var TagYourGame = React.createClass({
   mixins: [socketMixin],
   
   getInitialState: function() {
+    var n = prompt("anna nimi!")
+    var pp = [ {name: 'A', x: 0, y: 0}, {name: 'B', x:10, y:10} ]
     return {
       board: board,
-      player: prompt("anna nimi!"),
+      player: n,
       publics: {
-        players: [ {name: 'A', x: 0, y: 0}, {name: 'B', x:10, y:10} ]
+        players: pp
       },
+      sees: this.sees(_.find(pp, function (a) { return a.name === n }), board),
       possibles: [[0,1],[1,0]]
-    };
+    }
   },
 
   tryMove: function(i, j) {
@@ -175,24 +178,61 @@ var TagYourGame = React.createClass({
     }
   },
   
-  move: function(from, to) {
-    var i = to.x // TODO
-    var j = to.y // TODO
-    this.setState({
-      publics: { players: this.state.publics.players.map(function(a) { if (a === from) { a.x = i; a.y = j} return a; } )},
-      possibles: [[i + 1, j], [i, j + 1], [i - 1, j], [i, j - 1]] // TODO
-    })
-  },
-  
   canMove: function(from, to) {
     var xx = Math.abs(from.x - to.x)
     var yy = Math.abs(from.y - to.y)
     return  (xx === 1 && yy === 0) || (xx === 0 && yy === 1)
   },
+  
+  move: function(from, to) {
+    var i = to.x // TODO
+    var j = to.y // TODO
+    this.setState({
+      publics: { players: this.state.publics.players.map(function(a) { if (a === from) { a.x = i; a.y = j} return a; } )},
+      possibles: [[i + 1, j], [i, j + 1], [i - 1, j], [i, j - 1]], // TODO
+      sees: this.sees()
+    })
+  },
+
+  sees: function(from, board) {
+    from = from || this.me()
+    board = board || this.state.board
     
-  inLineOfSight: function(i, j) {
-    var pos = this.me()  
-    return pos.x === i || pos.y === j
+    function goDown(acc, x, y) {
+      var tile = board[x][y]
+      if (_.contains([0, 1, 3, 4, 5, 6, 8, 9], tile)) // can see down
+        return goDown(acc.concat([{x: x + 1, y: y}]), x + 1, y)
+      else
+        return acc
+    }
+    
+    function goUp(acc, x, y) {
+      var tile = board[x][y]
+      if (_.contains([0,1,3,4,7,10,11], tile)) // can see up    
+        return goUp(acc.concat([{x: x - 1, y: y}]), x - 1, y)
+      else
+        return acc
+    }
+    
+    function goLeft(acc, x, y) {
+      var tile = board[x][y]
+      if (_.contains([0, 2,5,6,7,9,11], tile)) // can see left
+        return goLeft(acc.concat([{x: x, y: y - 1}]), x, y - 1)
+      else 
+        return acc
+    }
+    
+    function goRight(acc, x, y) {
+      var tile = board[x][y]
+      if (_.contains([0,2,4,5,6,7,8,10], tile))  // can see right
+        return goRight(acc.concat([{x: x, y: y + 1}]), x, y + 1)
+      else
+        return acc
+    }
+    var x = from.x
+    var y = from.y
+    var all = [{x: x, y: y}].concat(goDown([], x, y), goUp([], x, y), goLeft([], x, y), goRight([], x, y))
+    return all
   },
   
   me: function() {
@@ -229,7 +269,7 @@ var TagYourGame = React.createClass({
                         enemy={this.containsEnemy(i, j)}
                         backgroundImage={cell}
                         possible={this.state.possibles.reduce(function(acc, a) { return acc || i === a[0] && j == a[1] }, false)}
-                        losOut={!this.inLineOfSight(i, j)}
+                        losOut={!_.find(this.state.sees, function (a) { return a.x === i && a.y === j })}
                         onClick={this.tryMove.bind(this, i, j)}
                       />
                     )
