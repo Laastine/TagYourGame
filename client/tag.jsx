@@ -139,7 +139,7 @@ var Block = React.createClass({
       'block-player': this.props.player,
       'block-enemy': this.props.enemy,
       'block-empty': !this.props.player && !this.props.enemy,
-      'block-possible': this.props.possible,
+      'block-moveable': this.props.moveable,
       'block-los-out': this.props.losOut
     }
     
@@ -165,14 +165,16 @@ var TagYourGame = React.createClass({
   getInitialState: function() {
     var n = prompt("anna nimi!")
     var pp = [ {name: 'A', x: 0, y: 0}, {name: 'B', x:10, y:10} ]
+    var p = _.find(pp, function (a) { return a.name === n })
+    var sees = this.sees(p, board)
     return {
       board: board,
       player: n,
       publics: {
         players: pp
       },
-      sees: this.sees(_.find(pp, function (a) { return a.name === n }), board),
-      possibles: [[0,1],[1,0]]
+      sees: sees,
+      moveables: this.moveables(p, sees)
     }
   },
 
@@ -191,12 +193,12 @@ var TagYourGame = React.createClass({
   },
   
   move: function(from, to) {
-    var i = to.x // TODO
-    var j = to.y // TODO
+    var sees = this.sees(to)
+    var moveables = this.moveables(to, sees)    
     this.setState({
-      publics: { players: this.state.publics.players.map(function(a) { if (a === from) { a.x = i; a.y = j} return a; } )},
-      possibles: [[i + 1, j], [i, j + 1], [i - 1, j], [i, j - 1]], // TODO
-      sees: this.sees()
+      publics: { players: this.state.publics.players.map(function(a) { if (a === from) { a.x = to.x; a.y = to.y} return a; } )},
+      moveables: moveables,
+      sees: sees
     })
   },
 
@@ -227,6 +229,17 @@ var TagYourGame = React.createClass({
     var y = from.y
     var all = [{x: x, y: y}].concat(goDown([], x, y), goUp([], x, y), goLeft([], x, y), goRight([], x, y))
     return all
+  },
+  
+  moveables: function(from, sees) {
+    from = from || this.me()
+    sees = sees || this.state.sees
+    var allowed = _.filter(sees, function (a) { 
+      var xx = Math.abs(from.x - a.x)
+      var yy = Math.abs(from.y - a.y)
+      return (xx === 1 && yy === 0) || (xx === 0 && yy === 1)
+    })
+    return allowed
   },
   
   me: function() {
@@ -262,7 +275,7 @@ var TagYourGame = React.createClass({
                         player={this.me().x === i && this.me().y === j}
                         enemy={this.containsEnemy(i, j)}
                         backgroundImage={cell}
-                        possible={this.state.possibles.reduce(function(acc, a) { return acc || i === a[0] && j == a[1] }, false)}
+                        moveable={_.find(this.state.moveables, function (a) { return a.x === i && a.y === j })}
                         losOut={!_.find(this.state.sees, function (a) { return a.x === i && a.y === j })}
                         onClick={this.tryMove.bind(this, i, j)}
                       />
