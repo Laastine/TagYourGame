@@ -1,0 +1,54 @@
+
+.block {
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  border-radius: 5px;
+  margin: 0 2px 0 2px;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  transition: all .1s ease-out;
+}
+
+.block:hover {
+  opacity: 0.8;
+}
+
+.block-player {
+  background-color: rgb(77, 172, 230);
+}
+
+.block-enemy {
+  background-color: rgb(255, 127, 0);
+}
+
+.block-empty {
+  background-color: rgb(223, 223, 223);
+}
+
+.block-possible {
+  background-color: rgb(0, 163, 61);
+  opacity: 0.3;
+}
+
+.block-los-out {
+  visibility: hidden
+}
+
+.block-enter {
+  opacity: 0.01;
+  -webkit-transform: scale(.5);
+  -moz-transform: scale(.5);
+  -ms-transform: scale(.5);
+  transform: scale(.5);
+  transition: all .3s ease-out;
+}
+
+.block-enter.block-enter-active {
+  opacity: 1;
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}

@@ -22,20 +22,15 @@ class ServerController extends ScalatraServlet
   with ScalateSupport with JValueResult with JacksonJsonSupport
   with SessionSupport with AtmosphereSupport {
 
-  implicit protected val jsonFormats: Formats = DefaultFormats
-  def logger = LoggerFactory.getLogger(this.getClass)
-
-  //Simple map generation
-  def generateMap() = {
-    val map = Array.fill(10, 10)(scala.util.Random.nextInt(10))
-  }
-
   get("/") {
     contentType = "text/html"
     ssp("/index")
   }
 
-  atmosphere("/server") {
+  implicit protected val jsonFormats: Formats = DefaultFormats
+  def logger = LoggerFactory.getLogger(this.getClass)
+
+  atmosphere("/") {
     new AtmosphereClient {
       def receive: AtmoReceive = {
 
@@ -46,15 +41,16 @@ class ServerController extends ScalatraServlet
 
         case Connected =>
           logger.info("Player %s is connected" format uuid)
-          broadcast(("author" -> "Someone") ~ ("message" -> "joined the game") ~ ("time" -> (new Date().getTime.toString)), Everyone)
+          broadcast(("Hello world!"), Everyone)
 
         case Disconnected(ClientDisconnected, _) =>
-          broadcast(("author" -> "Someone") ~ ("message" -> "has left the game") ~ ("time" -> (new Date().getTime.toString)), Everyone)
+          broadcast(("Goodbye"), Everyone)
 
         case Disconnected(ServerDisconnected, _) =>
-          logger.info("Server disconnected the client %s" format uuid)
+          logger.info("Server kicked the client %s" format uuid)
 
         case _: TextMessage =>
+          logger.info("Text message detected")
           send(("author" -> "system") ~ ("message" -> "Only JSON is allowed") ~ ("time" -> (new Date().getTime.toString)))
       }
     }
@@ -72,4 +68,11 @@ class ServerController extends ScalatraServlet
         layoutTemplate(path)
     } orElse serveStaticResource() getOrElse resourceNotFound()
   }
+
+
+  //Simple map generation
+  def generateMap() = {
+    val map = Array.fill(10, 10)(scala.util.Random.nextInt(10))
+  }
+
 }
