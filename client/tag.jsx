@@ -13,7 +13,7 @@ var TagYourGameSocketMixin = function (socketIo) {
               // assuming its always a player update!
               var players = this.state.global.players
               var their = data.player
-              var mine = _.find(players, function (a) { return their.name === a.name })
+              var mine = _.find(players, function (a) { return their.id === a.id })
               if ( ! mine) {
                 players.push(their)
               } else if ( ! _.isEqual(their, mine)) {
@@ -112,6 +112,15 @@ var TagYourGameSocketMixin = function (socketIo) {
     }
 };
 
+function guid() {
+  // rfc4122 version 4 compliant 
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
+}
+
+
 var board = [
   [8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 9], 
   [4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3], 
@@ -175,10 +184,10 @@ var TagYourGame = React.createClass({
   mixins: [socketMixin],
   
   getInitialState: function() {
-    var n = prompt("anna nimi!")
+    var n = guid();
     var x = Math.floor((Math.random() * size))
     var y = Math.floor((Math.random() * size))
-    var p = {name: n, x: x, y: y}
+    var p = {id: n, x: x, y: y}
     var sees = this.sees(p, board)
     return {
       board: board,
