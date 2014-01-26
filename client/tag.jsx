@@ -6,23 +6,38 @@ var TagYourGameSocketMixin = function () {
   var socket = window.io.connect('');
   return {
     changeHandler: function (data) {
-      // assuming its always a player update!
-      var players = this.state.global.players
-      var their = data.player
-      var mine = _.find(players, function (a) { return their.id === a.id })
-      if ( ! mine) {
-        players.push(their)
-      } else if ( ! _.isEqual(their, mine)) {
-        mine.x = their.x
-        mine.y = their.y
-        var update = { global: { players: players }}
-        this.setState(update);
+      var others = this.state.global.others
+      if (data.player) {
+        var their = data.player
+        var mine = _.find(others, function (a) { return their.id === a.id })
+        if ( ! mine) {
+          others.push(their)
+        } else if ( ! _.isEqual(their, mine)) {
+          mine.x = their.x
+          mine.y = their.y
+          var update = { global: { others: others }}
+          this.setState(update);
+        }
+      }
+      if (data.tags) {
+        var that = this
+        data.tags.forEach(function (a) {
+          var notRemoved = _.filter(others, function (b) { return a !== b.id })
+          var update = { global: { others: notRemoved }}
+          that.setState(update)
+          if (that.state.player.id === a)
+            document.getElementById('game').innerHTML = 'You are dead'
+        })
       }
     },
     componentWillUpdate: function (props, state) {
       if ( ! _.isEqual(transmitted, state.player)) {
         socket.emit('component-change', { player: state.player });
         transmitted = _.clone(state.player)
+      }
+      if ( state.pendingTags && state.pendingTags.length > 0) {
+        socket.emit('component-change', { tags: state.pendingTags });
+        state.pendingTags = []
       }
     },
     componentDidMount: function (root) {
@@ -111,13 +126,14 @@ var TagYourGame = React.createClass({
     var chaser = Math.floor((Math.random() * 10)) < 3 // 30% chance
     var x = Math.floor((Math.random() * size))
     var y = Math.floor((Math.random() * size))
-    var p = {id: n, x: x, y: y, chaser: chaser}
+    var p = {id: n, x: x, y: y, chaser: chaser }
     var sees = this.sees(p, board)
     return {
       board: board,
       player: p,
+      pendingTags: [],
       global: {
-        players: []
+        others: []
       },
       sees: sees,
       moveables: this.moveables(p, sees)
@@ -128,12 +144,27 @@ var TagYourGame = React.createClass({
     var player = this.me()
     var desired = {x: i, y: j}
     if (this.canMove(player, desired)) {
+      this.tryTag(i, j)
       this.move(player, desired)
     }
   },
   
   canMove: function(from, to) {
     return !!_.find(this.state.moveables, function (a) { return a.x === to.x && a.y === to.y })
+  },
+  
+  tryTag: function(x, y) {
+    if (this.me().chaser) {
+      var chased = this.findRunner(x, y)
+      if (chased) {
+        this.setState({ 
+          pendingTags: this.state.pendingTags.concat(chased.id),
+          global: {
+            others: _.filter(this.state.global.others, function (b) { return chased.id !== b.id })
+          }
+        })
+      }
+    }
   },
   
   move: function(player, to) {
@@ -200,12 +231,16 @@ var TagYourGame = React.createClass({
   
   containsChaser: function(i, j) {
     var s = this.state
-    return !this.containsMe(i, j) && !! _.find(s.global.players, function(a) { return a.x === i && a.y === j && a.chaser })
+    return !this.containsMe(i, j) && !! _.find(s.global.others, function(a) { return a.x === i && a.y === j && a.chaser })
+  },
+  
+  findRunner: function (i, j) {
+    var s = this.state
+    return _.find(s.global.others, function(a) { return a.x === i && a.y === j && ! a.chaser })
   },
   
   containsRunner: function(i, j) {
-    var s = this.state
-    return !this.containsMe(i, j) && !! _.find(s.global.players, function(a) { return a.x === i && a.y === j && ! a.chaser })
+    return !this.containsMe(i, j) && !! this.findRunner(i, j)
   },
   
   render: function() {
