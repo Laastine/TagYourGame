@@ -104,9 +104,9 @@ var Block = React.createClass({
     else if (this.props.player && this.props.isPlayerChaser)
       icon = 'url(img/player_tag.png) no-repeat, '
     else if (this.props.runner) 
-      icon = 'url(img/Enemy.png) no-repeat, '
+      icon = 'url(img/Neutral.png) no-repeat, '
     else if (this.props.chaser)
-      icon = 'url(img/Enemy_tag.png) no-repeat, '
+      icon = 'url(img/Enemy.png) no-repeat, '
     else
       icon = ''
     
