@@ -136,8 +136,17 @@ var Block = React.createClass({
       'block-possible': this.props.possible,
       'block-los-out': this.props.losOut
     }
+    
+    var icon;
+    if (this.props.enemy) 
+      icon = 'url(img/Enemy.png) no-repeat, '
+    else if (this.props.player) 
+      icon = 'url(img/Player.png) no-repeat, '
+    else 
+      icon = ''
+    
     var styles = {
-      'background-image': "url('img/" + this.props.backgroundImage + ".png')"
+      'background': icon + 'url(img/' + this.props.backgroundImage + '.png) no-repeat'
     }
     return <div className={classSet(classes)} style={styles} onClick={this.props.onClick} />
   }
