@@ -5,3 +5,4 @@ server/.idea_modules/
 .idea/
 target/
 server/log/
+node_modules
