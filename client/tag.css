@@ -53,3 +53,94 @@
   -ms-transform: scale(1);
   transform: scale(1);
 }
+
+#menu{
+	background-color: rgba(70, 235, 245, 0.1);
+	background-image:url('img/menu.png');
+	width: 800px;
+	height: 566px;
+	position: absolute;
+	border-width: 5px;
+    border-style: solid;
+    border-radius: 5%;
+    box-shadow: 0 0 30px;
+}
+
+.menu-background{
+    margin-left: auto;
+    margin-right: auto;
+	margin-top: 150px;
+	background-color: rgba(225, 225, 245, 0.95);
+	width: 200px;
+	height: 250px;
+	border-width: 5px;
+    border-style: solid;
+    border-radius: 20%;
+	border-color: #9d9dba;
+    box-shadow: 0 0 30px #bebed8;
+}
+
+.menu-button{
+    margin-left: auto;
+    margin-right: auto;
+    display: inherit;
+	padding: -1px;
+	border-color: #005292;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 20%;
+    box-shadow: 0 0 30px #002b4c;
+}
+
+.play-button{margin-top: 35px;}
+
+.explode-button{margin-top: 65px;}
+
+/* .menu-button:hover { 
+	-webkit-transform: scale(1.1);
+	transform:  scale(1.1); 
+ } */
+ 
+ .animated {
+    -webkit-animation-fill-mode: both;
+       -moz-animation-fill-mode: both;
+        -ms-animation-fill-mode: both;
+         -o-animation-fill-mode: both;
+            animation-fill-mode: both;
+	animation-iteration-count: infinite;
+}
+
+.bounce{
+	-webkit-animation-duration: 1s;
+    -moz-animation-duration: 1s;
+	
+    -webkit-animation-name: bounce;
+    -moz-animation-name: bounce;
+    -ms-animation-name: bounce;
+    -o-animation-name: bounce;
+    animation-name: bounce;
+}
+
+.bounce:hover{
+	-moz-animation-duration: 0.5s;
+	-webkit-animation-duration: 0.5s;
+
+    -webkit-animation-name: bounce;
+    -moz-animation-name: bounce;
+    -ms-animation-name: bounce;
+    -o-animation-name: bounce;
+    animation-name: bounce;
+}
+ 
+@-webkit-keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {-webkit-transform: translateY(0);}
+    40% {-webkit-transform: translateY(-30px);}
+    60% {-webkit-transform: translateY(-15px);}
+}
+ 
+@-moz-keyframes bounce {
+    0% {-moz-transform: scale(0.8);}
+	50% {-moz-transform: scale(1.2);}
+	100% {-moz-transform: scale(0.8);}
+
+}
