@@ -13,7 +13,7 @@ var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
 
   socket.on('component-change', function (data) {
-    console.log('' + data);
+    console.log('received=', data);
     socket.broadcast.emit('component-change', data);
   });
 
