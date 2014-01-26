@@ -12,7 +12,7 @@
 }
 
 .block:hover {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .block-player {
@@ -25,11 +25,12 @@
 
 .block-empty {
   background-color: rgb(223, 223, 223);
+  opacity: 0.35;
 }
 
 .block-possible {
   background-color: rgb(0, 163, 61);
-  opacity: 0.3;
+  opacity: 0.75;
 }
 
 .block-los-out {
