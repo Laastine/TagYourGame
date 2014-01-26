@@ -102,7 +102,6 @@ var TagYourGameSocketMixin = function (socketIo) {
     }
 };
 
-
 var board = [
   [8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 9], 
   [4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3], 
@@ -120,6 +119,13 @@ var board = [
   [4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3], 
   [10, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 11]
 ];
+
+var moves = {
+  down: [0, 1, 3, 4, 5, 6, 8, 9],
+  up: [0,1,3,4,7,10,11],
+  right: [0,2,4,5,6,7,8,10],
+  left: [0, 2,5,6,7,9,11]
+}
 
 var socketMixin = TagYourGameSocketMixin(true)
 
@@ -198,37 +204,25 @@ var TagYourGame = React.createClass({
     from = from || this.me()
     board = board || this.state.board
     
-    function goDown(acc, x, y) {
-      var tile = board[x][y]
-      if (_.contains([0, 1, 3, 4, 5, 6, 8, 9], tile)) // can see down
-        return goDown(acc.concat([{x: x + 1, y: y}]), x + 1, y)
-      else
-        return acc
+    var goWhere = function (allowed, next) {
+      var go = function fn (acc, x, y) {
+        var tile = board[x][y]
+        if (_.contains(allowed, tile)) {
+          var n = next(x, y)
+          acc.push(n)
+          return fn(acc, n.x, n.y)
+        } else {
+          return acc
+        }
+      }
+      return go
     }
     
-    function goUp(acc, x, y) {
-      var tile = board[x][y]
-      if (_.contains([0,1,3,4,7,10,11], tile)) // can see up    
-        return goUp(acc.concat([{x: x - 1, y: y}]), x - 1, y)
-      else
-        return acc
-    }
-    
-    function goLeft(acc, x, y) {
-      var tile = board[x][y]
-      if (_.contains([0, 2,5,6,7,9,11], tile)) // can see left
-        return goLeft(acc.concat([{x: x, y: y - 1}]), x, y - 1)
-      else 
-        return acc
-    }
-    
-    function goRight(acc, x, y) {
-      var tile = board[x][y]
-      if (_.contains([0,2,4,5,6,7,8,10], tile))  // can see right
-        return goRight(acc.concat([{x: x, y: y + 1}]), x, y + 1)
-      else
-        return acc
-    }
+    var goDown = goWhere(moves.down, function (i, j) { return {x: i + 1, y: j} })
+    var goUp = goWhere(moves.up, function (i, j) { return {x: i - 1, y: j} })
+    var goLeft = goWhere(moves.left, function (i, j) { return {x: i, y: j - 1} })
+    var goRight = goWhere(moves.right, function (i, j) { return {x: i, y: j + 1} })
+      
     var x = from.x
     var y = from.y
     var all = [{x: x, y: y}].concat(goDown([], x, y), goUp([], x, y), goLeft([], x, y), goRight([], x, y))
