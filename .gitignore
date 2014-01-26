@@ -3,6 +3,5 @@ server/.idea/
 server/server.iml
 server/.idea_modules/
 .idea/
-project/
 target/
 server/log/
