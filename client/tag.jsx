@@ -84,12 +84,14 @@ var Block = React.createClass({
     }
     
     var icon;
-    if (this.props.player) 
+    if (this.props.player && ! this.props.isPlayerChaser)
       icon = 'url(img/player.png) no-repeat, '
+    else if (this.props.player && this.props.isPlayerChaser)
+      icon = 'url(img/player_tag.png) no-repeat, '
     else if (this.props.runner) 
       icon = 'url(img/Enemy.png) no-repeat, '
     else if (this.props.chaser)
-      icon = 'url(img/Enemy.png) no-repeat, '
+      icon = 'url(img/Enemy_tag.png) no-repeat, '
     else
       icon = ''
     
@@ -221,6 +223,7 @@ var TagYourGame = React.createClass({
                     return (
                       <Block
                         player={this.containsMe(i, j)}
+                        isPlayerChaser={this.state.player.chaser}
                         chaser={this.containsChaser(i, j)}
                         runner={this.containsRunner(i, j)}
                         backgroundImage={cell}
