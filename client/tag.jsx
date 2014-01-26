@@ -7,7 +7,7 @@ var TagYourGameSocketMixin = function (socketIo) {
     
     if (socketIo) {
     
-      var socket = window.io.connect('http://localhost:8086');
+      var socket = window.io.connect('');
       return {
             changeHandler: function (data) {
               // assuming its always a player update!
