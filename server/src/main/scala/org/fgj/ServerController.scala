@@ -19,18 +19,13 @@ import ExecutionContext.Implicits.global
  * Date: 25.01.2014
  */
 class ServerController extends ScalatraServlet
-  with ScalateSupport with JValueResult with JacksonJsonSupport
+  with JValueResult with JacksonJsonSupport
   with SessionSupport with AtmosphereSupport {
-
-  get("/") {
-    contentType = "text/html"
-    ssp("/index")
-  }
 
   implicit protected val jsonFormats: Formats = DefaultFormats
   def logger = LoggerFactory.getLogger(this.getClass)
 
-  atmosphere("/") {
+  atmosphere("/hipserver") {
     new AtmosphereClient {
       def receive: AtmoReceive = {
 
@@ -44,6 +39,7 @@ class ServerController extends ScalatraServlet
           broadcast(("Hello world!"), Everyone)
 
         case Disconnected(ClientDisconnected, _) =>
+          logger.info("Player %s disconnected" format uuid)
           broadcast(("Goodbye"), Everyone)
 
         case Disconnected(ServerDisconnected, _) =>
@@ -59,16 +55,6 @@ class ServerController extends ScalatraServlet
   error {
     case e: Throwable => logger.error("ERROR "+e.toString)
   }
-
-  notFound {
-    contentType = null // remove content type in case it was set through an action
-    findTemplate(requestPath) map {
-      path => // Try to render a ScalateTemplate if no route matched
-        contentType = "text/html"
-        layoutTemplate(path)
-    } orElse serveStaticResource() getOrElse resourceNotFound()
-  }
-
 
   //Simple map generation
   def generateMap() = {

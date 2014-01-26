@@ -48,4 +48,12 @@ object ServerBuild extends Build {
       }
     )
   )
+
+  publishArtifact in (Compile, packageBin) := true
+
+  publishArtifact in (Test, packageBin) := false
+
+  publishArtifact in (Compile, packageDoc) := false
+
+  publishArtifact in (Compile, packageSrc) := true
 }
