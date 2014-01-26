@@ -6,7 +6,6 @@ var TagYourGameSocketMixin = function (socketIo) {
     if (socketIo) {
    
       var socket = window.io.connect('http://localhost:3000');
-
       return {
             changeHandler: function (data) {
               if (!_.isEqual(data.state.publics, this.state.publics)) {
@@ -186,9 +185,7 @@ var TagYourGame = React.createClass({
   },
   
   canMove: function(from, to) {
-    var xx = Math.abs(from.x - to.x)
-    var yy = Math.abs(from.y - to.y)
-    return  (xx === 1 && yy === 0) || (xx === 0 && yy === 1)
+    return !!_.find(this.state.moveables, function (a) { return a.x === to.x && a.y === to.y })
   },
   
   move: function(from, to) {
@@ -233,12 +230,11 @@ var TagYourGame = React.createClass({
   moveables: function(from, sees) {
     from = from || this.me()
     sees = sees || this.state.sees
-    var allowed = _.filter(sees, function (a) { 
+    return _.filter(sees, function (a) { 
       var xx = Math.abs(from.x - a.x)
       var yy = Math.abs(from.y - a.y)
       return (xx === 1 && yy === 0) || (xx === 0 && yy === 1)
     })
-    return allowed
   },
   
   me: function() {
