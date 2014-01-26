@@ -8,7 +8,7 @@ Node.js server
 Uses [React.js](http://facebook.github.io/react/) and websocket.
 
 <h3>Team members:</h3>
-Mikko Kaistinen (back end) <br>
+Mikko Kaistinen <br>
 Lauri Naukkarinen (front end) <br>
 Oskar Sonninen (assets) <br>
 Joonas Blomberg (assets)
