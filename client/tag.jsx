@@ -42,7 +42,6 @@ function guid() {
   });
 }
 
-
 var board = [
   [8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 9], 
   [4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3], 
@@ -79,19 +78,19 @@ var Block = React.createClass({
   render: function() {
     var classes = {
       'block': true,
-      'block-player': this.props.player,
-      'block-enemy': this.props.enemy,
-      'block-empty': !this.props.player && !this.props.enemy,
+      'block-empty': !this.props.player && !this.props.runner && !this.props.chaser,
       'block-moveable': this.props.moveable,
       'block-los-out': this.props.losOut
     }
     
     var icon;
-    if (this.props.enemy) 
+    if (this.props.player) 
+      icon = 'url(img/player.png) no-repeat, '
+    else if (this.props.runner) 
       icon = 'url(img/Enemy.png) no-repeat, '
-    else if (this.props.player) 
-      icon = 'url(img/Player.png) no-repeat, '
-    else 
+    else if (this.props.chaser)
+      icon = 'url(img/Enemy.png) no-repeat, '
+    else
       icon = ''
     
     var styles = {
@@ -107,9 +106,10 @@ var TagYourGame = React.createClass({
   
   getInitialState: function() {
     var n = guid();
+    var chaser = Math.floor((Math.random() * 10)) < 3 // 30% chance
     var x = Math.floor((Math.random() * size))
     var y = Math.floor((Math.random() * size))
-    var p = {id: n, x: x, y: y}
+    var p = {id: n, x: x, y: y, chaser: chaser}
     var sees = this.sees(p, board)
     return {
       board: board,
@@ -196,9 +196,14 @@ var TagYourGame = React.createClass({
     return me.x === i && me.y === j
   },
   
-  containsEnemy: function(i, j) {
+  containsChaser: function(i, j) {
     var s = this.state
-    return !this.containsMe(i, j) && !! _.find(s.global.players, function(a) { return a.x === i && a.y === j })
+    return !this.containsMe(i, j) && !! _.find(s.global.players, function(a) { return a.x === i && a.y === j && a.chaser })
+  },
+  
+  containsRunner: function(i, j) {
+    var s = this.state
+    return !this.containsMe(i, j) && !! _.find(s.global.players, function(a) { return a.x === i && a.y === j && ! a.chaser })
   },
   
   render: function() {
@@ -216,7 +221,8 @@ var TagYourGame = React.createClass({
                     return (
                       <Block
                         player={this.containsMe(i, j)}
-                        enemy={this.containsEnemy(i, j)}
+                        chaser={this.containsChaser(i, j)}
+                        runner={this.containsRunner(i, j)}
                         backgroundImage={cell}
                         moveable={_.find(this.state.moveables, function (a) { return a.x === i && a.y === j })}
                         losOut={!_.find(this.state.sees, function (a) { return a.x === i && a.y === j })}
