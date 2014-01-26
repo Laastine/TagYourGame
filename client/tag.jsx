@@ -3,18 +3,31 @@
 
 var TagYourGameSocketMixin = function (socketIo) {
 
+    var transmitted;
+
     if (socketIo) {
    
       var socket = window.io.connect('http://localhost:3000');
       return {
             changeHandler: function (data) {
-              if (!_.isEqual(data.state.publics, this.state.publics)) {
-                var update = {publics: data.state.publics }
+              // assuming its always a player update!
+              var players = this.state.global.players
+              var their = data.player
+              var mine = _.find(players, function (a) { return their.name === a.name })
+              if ( ! mine) {
+                players.push(their)
+              } else if ( ! _.isEqual(their, mine)) {
+                mine.x = their.x
+                mine.y = their.y
+                var update = { global: { players: players }}
                 this.setState(update);
               }
             },
             componentWillUpdate: function (props, state) {
-              socket.emit('component-change', { state: state });
+              if ( ! _.isEqual(transmitted, state.player)) {
+                socket.emit('component-change', { player: state.player });
+                transmitted = _.clone(state.player)
+              }
             },
             componentDidMount: function (root) {
               socket.on('component-change', this.changeHandler);
@@ -23,7 +36,6 @@ var TagYourGameSocketMixin = function (socketIo) {
               socket.removeListener('component-change', this.change);
             }
         };
-            
     } 
     else {
     
@@ -122,8 +134,10 @@ var moves = {
   down: [0, 1, 3, 4, 5, 6, 8, 9],
   up: [0,1,3,4,7,10,11],
   right: [0,2,4,5,6,7,8,10],
-  left: [0, 2,5,6,7,9,11]
+  left: [0,2,3,5,6,7,9,11]
 }
+
+var size = board.length
 
 var socketMixin = TagYourGameSocketMixin(true)
 
@@ -162,14 +176,15 @@ var TagYourGame = React.createClass({
   
   getInitialState: function() {
     var n = prompt("anna nimi!")
-    var pp = [ {name: 'A', x: 0, y: 0}, {name: 'B', x:10, y:10} ]
-    var p = _.find(pp, function (a) { return a.name === n })
+    var x = Math.floor((Math.random() * size))
+    var y = Math.floor((Math.random() * size))
+    var p = {name: n, x: x, y: y}
     var sees = this.sees(p, board)
     return {
       board: board,
-      player: n,
-      publics: {
-        players: pp
+      player: p,
+      global: {
+        players: []
       },
       sees: sees,
       moveables: this.moveables(p, sees)
@@ -188,11 +203,13 @@ var TagYourGame = React.createClass({
     return !!_.find(this.state.moveables, function (a) { return a.x === to.x && a.y === to.y })
   },
   
-  move: function(from, to) {
+  move: function(player, to) {
     var sees = this.sees(to)
-    var moveables = this.moveables(to, sees)    
+    var moveables = this.moveables(to, sees)
+    player.x = to.x
+    player.y = to.y
     this.setState({
-      publics: { players: this.state.publics.players.map(function(a) { if (a === from) { a.x = to.x; a.y = to.y} return a; } )},
+      player: player,
       moveables: moveables,
       sees: sees
     })
@@ -239,7 +256,7 @@ var TagYourGame = React.createClass({
   
   me: function() {
     var s = this.state
-    return _.find(s.publics.players, function(a) { return a.name == s.player })
+    return s.player
   },
   
   containsMe: function(i, j) {
@@ -250,7 +267,7 @@ var TagYourGame = React.createClass({
   
   containsEnemy: function(i, j) {
     var s = this.state
-    return !this.containsMe(i, j) && !! _.find(s.publics.players, function(a) { return a.x === i && a.y === j })
+    return !this.containsMe(i, j) && !! _.find(s.global.players, function(a) { return a.x === i && a.y === j })
   },
   
   render: function() {
