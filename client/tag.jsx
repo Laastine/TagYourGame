@@ -11,7 +11,6 @@ var TagYourGameSocketMixin = function (socketIo) {
             changeHandler: function (data) {
               if (!_.isEqual(data.state.publics, this.state.publics)) {
                 var update = {publics: data.state.publics }
-                console.log(update)
                 this.setState(update);
               }
             },
