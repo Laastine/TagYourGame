@@ -122,7 +122,7 @@ var moves = {
   down: [0, 1, 3, 4, 5, 6, 8, 9],
   up: [0,1,3,4,7,10,11],
   right: [0,2,4,5,6,7,8,10],
-  left: [0, 2,5,6,7,9,11]
+  left: [0, 2, 3, 5,6,7,9,11]
 }
 
 var socketMixin = TagYourGameSocketMixin(true)
