@@ -1,116 +1,38 @@
 /** @jsx React.DOM */
 
 
-var TagYourGameSocketMixin = function (socketIo) {
-
-    var transmitted;
-    
-    if (socketIo) {
-    
-      var socket = window.io.connect('');
-      return {
-            changeHandler: function (data) {
-              // assuming its always a player update!
-              var players = this.state.global.players
-              var their = data.player
-              var mine = _.find(players, function (a) { return their.id === a.id })
-              if ( ! mine) {
-                players.push(their)
-              } else if ( ! _.isEqual(their, mine)) {
-                mine.x = their.x
-                mine.y = their.y
-                var update = { global: { players: players }}
-                this.setState(update);
-              }
-            },
-            componentWillUpdate: function (props, state) {
-              if ( ! _.isEqual(transmitted, state.player)) {
-                socket.emit('component-change', { player: state.player });
-                transmitted = _.clone(state.player)
-              }
-            },
-            componentDidMount: function (root) {
-              socket.on('component-change', this.changeHandler);
-            },
-            componentWillUnmount: function () {
-              socket.removeListener('component-change', this.change);
-            }
-        };
-    } 
-    else {
-    
-            var ms;
-            var transport = 'websocket';
-            var logged = false;
-            var request = {
-                url: "http://10.10.99.116:8080/server",
-                contentType: "application/json",
-                logLevel: 'debug',
-                transport: transport,
-                fallbackTransport: 'long-polling'
-            };
-
-              request.onOpen = function (response) {
-                  
-                  transport = response.transport;
-                  if (response.transport == "local") {
-                      subSocket.pushLocal("Name?");
-                  }
-              };
-
-              request.onReconnect = function (rq, rs) {
-                  ms.info("Reconnecting")
-              };
-
-              request.onMessage = function (rs) {
-
-                  var message = rs.responseBody;
-                  try {
-                      var json = jQuery.parseJSON(message);
-                      console.log("Got a message")
-                      console.log(json)
-                  } catch (e) {
-                      console.log('This doesn\'t look like a valid JSON object: ', message.data);
-                      return;
-                  }
-
-                  if (!logged) {
-                      logged = true;
-                      subSocket.pushLocal("heippa");
-                  } else {
-                      console.log(json)
-                  }
-              };
-
-              request.onClose = function (rs) {
-                  console.log('aaaa')
-              };
-
-              request.onError = function (rs) {
-
-              console.log('error')
-              };
-
-              ms = window.atmosphere.subscribe(request);
-              
-              return {
-                  changeHandler: function (data) {
-                    if (!_.isEqual(data.state, this.state)) {
-                      this.setState(data.state);
-                    }
-                  },
-                  componentWillUpdate: function (props, state) {
-                    socket.emit('component-change', { state: state });
-                  },
-                  componentDidMount: function (root) {
-                    socket.on('component-change', this.changeHandler);
-                  },
-                  componentWillUnmount: function () {
-                    socket.removeListener('component-change', this.change);
-                  }
-              };
+var TagYourGameSocketMixin = function () {
+  var transmitted;
+  var socket = window.io.connect('');
+  return {
+    changeHandler: function (data) {
+      // assuming its always a player update!
+      var players = this.state.global.players
+      var their = data.player
+      var mine = _.find(players, function (a) { return their.id === a.id })
+      if ( ! mine) {
+        players.push(their)
+      } else if ( ! _.isEqual(their, mine)) {
+        mine.x = their.x
+        mine.y = their.y
+        var update = { global: { players: players }}
+        this.setState(update);
+      }
+    },
+    componentWillUpdate: function (props, state) {
+      if ( ! _.isEqual(transmitted, state.player)) {
+        socket.emit('component-change', { player: state.player });
+        transmitted = _.clone(state.player)
+      }
+    },
+    componentDidMount: function (root) {
+      socket.on('component-change', this.changeHandler);
+    },
+    componentWillUnmount: function () {
+      socket.removeListener('component-change', this.change);
     }
-};
+  }
+}
 
 function guid() {
   // rfc4122 version 4 compliant 
@@ -148,7 +70,7 @@ var moves = {
 
 var size = board.length
 
-var socketMixin = TagYourGameSocketMixin(true)
+var connectedSocketMixin = TagYourGameSocketMixin()
 
 var TransitionGroup = React.addons.TransitionGroup;
 var classSet = React.addons.classSet;
@@ -181,7 +103,7 @@ var Block = React.createClass({
 
 var TagYourGame = React.createClass({
 
-  mixins: [socketMixin],
+  mixins: [connectedSocketMixin],
   
   getInitialState: function() {
     var n = guid();
