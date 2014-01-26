@@ -272,7 +272,7 @@ var TagYourGame = React.createClass({
                   row.map(function(cell, j) {
                     return (
                       <Block
-                        player={this.me().x === i && this.me().y === j}
+                        player={this.containsMe(i, j)}
                         enemy={this.containsEnemy(i, j)}
                         backgroundImage={cell}
                         moveable={_.find(this.state.moveables, function (a) { return a.x === i && a.y === j })}
