@@ -1,4 +1,4 @@
-TagYourGame - FGJ 2014
+Tag If You Can! - FGJ 2014
 ===========
 
 <h3>Server:</h3>
