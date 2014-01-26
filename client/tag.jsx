@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 
-var socketMixin = function (socketIo) {
+var TagYourGameSocketMixin = function (socketIo) {
 
     if (socketIo) {
    
@@ -121,7 +121,7 @@ var board = [
   [10, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 11]
 ];
 
-var connectedSocketMixin = socketMixin(true)
+var socketMixin = TagYourGameSocketMixin(true)
 
 var TransitionGroup = React.addons.TransitionGroup;
 var classSet = React.addons.classSet;
@@ -145,7 +145,7 @@ var Block = React.createClass({
 
 var TagYourGame = React.createClass({
 
-  mixins: [connectedSocketMixin],
+  mixins: [socketMixin],
   
   getInitialState: function() {
     return {
