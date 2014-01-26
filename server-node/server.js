@@ -5,7 +5,7 @@ var app = express();
 var server = http.createServer(app);
 
 app.use(express.static(__dirname + '/../client'));
-app.listen(8086, function () { });
+server.listen(8086, function () { });
 
 var io = require('socket.io').listen(server);
 
